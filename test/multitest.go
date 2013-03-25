@@ -9,11 +9,10 @@ import (
 
 func main() {
 	for {
-		var s string		
+		var s string
 		fmt.Scanf("%s", &s) // Receive data from stdin
-		// Abort when "stream" closes
-		if(len(s) < 1) {
-			return;
+		if len(s) < 1 {
+			return
 		}
 		fmt.Println(s) // Echo received to stdout
 	}
