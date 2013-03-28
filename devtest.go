@@ -12,6 +12,7 @@ import (
 type Command struct {
 	Id int
 	Cmd interface{}
+	Signal int
 }
 
 type Response struct {
@@ -28,22 +29,26 @@ func main() {
 			var c Command
 			json.Unmarshal([]byte(s), &c)
 
-			// Process input on separate routine
-			go func(c Command) {
-				// Test with some delay for one command
-				m := c.Cmd.(map[string]interface{}) 
-				if(m["test"] == "a") {
-					time.Sleep(5 * time.Second)
-				}
-				// Print response to stdout
-				// Each response must be separated by a new line
-				var r Response
-				r.Id = c.Id
-				r.Data = c.Cmd  // Just echo command
+			if(c.Signal == -1) { // No signal
+				// Process input on separate routine
+				go func(c Command) {
+					// Test with some delay for one command
+					m := c.Cmd.(map[string]interface{}) 
+					if(m["test"] == "a") {
+						time.Sleep(5 * time.Second)
+					}
+					// Print response to stdout
+					// Each response must be separated by a new line
+					var r Response
+					r.Id = c.Id
+					r.Data = c.Cmd  // Just echo command
 
-				b, _ := json.Marshal(r)
-				fmt.Println(string(b)) // Echo received to stdout
-			}(c)
+					b, _ := json.Marshal(r)
+					fmt.Println(string(b)) // Echo received to stdout
+				}(c)
+			} else if c.Signal == 1 { // Termination signal
+				return
+			}			
 		}
 	}
 }
