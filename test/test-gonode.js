@@ -40,6 +40,32 @@ exports.testJSONEcho = function(test) {
 	});
 }
 
+/* Test multiple commands */
+exports.testMultipleCmds = function(test) {
+	var json = {
+		'0': {index: '0'},
+		'1': {index: '1'},
+		'2': {index: '2'},
+		'3': {index: '3'},
+		'4': {index: '4'},
+		'5': {index: '5'},
+	}
+	var count = 6;
+
+	// Make sure each executed command is returned, and only once
+	for (j in json) {
+		goInstance.execute(json[j], function(response) {
+			test.ok(json[response.index].index === response.index);
+			delete json[response.index]
+			count--;
+			if(count === 0) {
+				test.expect(6);
+				test.done();
+			}			
+		});
+	}
+}
+
 exports.closeGo = function(test) {
 	goInstance.close();
 	test.done();
