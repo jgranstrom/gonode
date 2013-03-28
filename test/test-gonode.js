@@ -15,6 +15,9 @@ exports.testInit = function(test) {
 		// Does not fail init if file exists
 		// Also setup the test instance to use for further tests
 		goInstance = new Go('./test/echo.go');
+		goInstance.on('error', function(err) {
+			console.log(err.data.toString());
+		});
 		goInstance.init(function(err) {
 			test.ifError(err);
 
