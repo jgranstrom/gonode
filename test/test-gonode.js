@@ -1,3 +1,7 @@
+/* Test cases for gonode
+ * 
+ * run all tests with 'nodeunit test'
+ */
 var Go = require('../lib/gonode.js').Go;
 
 var goInstance; // Use for tests after testInit() to avoid having to start several processes
@@ -66,6 +70,9 @@ exports.testMultipleCmds = function(test) {
 	}
 }
 
+/* Add more test cases here */
+
+/* Close go instance - Leave this as last case! */
 exports.closeGo = function(test) {
 	goInstance.close();
 	test.done();
