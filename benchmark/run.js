@@ -71,7 +71,7 @@ var benchmarks = [
 	},
 	// Smash gonode with a lot of commands
 	function benchMany(go, done) {
-		var limit = 999,
+		var limit = 9999,
 			count = 0;
 		
 		bef = new Date();
