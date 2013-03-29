@@ -1,12 +1,32 @@
-/* Test cases for gonode
- * 
- * run all tests with 'nodeunit test'
- */
+// Copyright (C) 2013 John Granström
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+// Test cases for gonode
+// Run all tests with 'nodeunit test'
+
 var Go = require('../lib/gonode.js').Go;
 
 var goInstance; // Use for tests after testInit() to avoid having to start several processes
 
-/* Test the init of Go */
+// Test the init of Go
 exports.testInit = function(test) {
 	// Fail constructor if no path given
 	test.throws(function(){new Go();});
@@ -31,7 +51,7 @@ exports.testInit = function(test) {
 	});	
 }
 
-/* Test a simple JSON echo */
+// Test a simple JSON echo
 exports.testJSONEcho = function(test) {
 	var jsonData = {test: 'stuff', array: [1, 2, 3]};
 
@@ -44,7 +64,7 @@ exports.testJSONEcho = function(test) {
 	});
 }
 
-/* Test multiple commands */
+// Test multiple commands
 exports.testMultipleCmds = function(test) {
 	var json = {
 		'0': {index: '0'},
@@ -70,7 +90,7 @@ exports.testMultipleCmds = function(test) {
 	}
 }
 
-/* Test command limit queue */
+// Test command limit queue
 exports.testCommandLimit = function(test) {
 	var json = {
 		'a': {test: 'a'},
@@ -103,9 +123,9 @@ exports.testCommandLimit = function(test) {
 }
 
 
-/* Add more test cases here */
+// Add more test cases here
 
-/* Close go instance - Leave this as last case! */
+// Close go instance - Leave this as last case!
 exports.closeGo = function(test) {
 	goInstance.close();
 	test.done();
