@@ -58,7 +58,6 @@ var benchmarks = [
 			bef = new Date();
 			go.execute({test: 'b'}, function(timeout, response) {
 				sumResults += (new Date() - bef)
-
 				if(i == (resultCount - 1)) {
 					console.log('Average time for single command: ' 
 						+ sumResults / resultCount + 'ms');
@@ -72,17 +71,22 @@ var benchmarks = [
 	},
 	// Smash gonode with a lot of commands
 	function benchMany(go, done) {
-		var limit = 9999;
+		var limit = 999,
+			count = 0;
 		
 		bef = new Date();
 		for(var i = 0; i <= limit; i++) {
 			var f = function(i) {
-				go.execute({test: 'b'}, function(timeout, response) {
-					if(i >= limit) {
+				go.execute({test: i}, function(timeout, response) {
+					if(timeout) {
+						console.log('timeout for ' + i + ' result invalid');	
+					}
+					
+					if(++count > limit) {
 						console.log((limit + 1) + ' commands in ' + (new Date() - bef) + 'ms');;	
 						done();
 					}					
-				});			
+				});
 			};
 			f(i);
 		}

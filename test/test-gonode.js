@@ -153,6 +153,39 @@ exports.testCommandTimeout = function(test) {
 	});
 }
 
+// Test that panics are handled accordingly with error event and command timeout
+exports.testPanicHandling = function(test) {
+	var goPanic = new Go({path: './test/panic.go', initAtOnce: true}, function(err) {
+		var hasError,
+			hasTimedout,
+			assertCount = 3;
+
+		goPanic.on('error', function(err) {			
+			if(!hasError) { // Only care about one error (errors may be split up)
+				hasError = true;
+				test.ok(err);
+				test.ok(!err.parser);
+
+				if(hasTimedout) {
+					test.expect(assertCount);
+					test.done();
+					goPanic.close();
+				}
+			}
+		});
+
+		goPanic.execute({test: 'a'}, function(timeout, response) {
+			test.ok(timeout);
+
+			if(hasError) {
+				test.expect(assertCount);
+				test.done();
+				goPanic.close();
+			}			
+		}, {commandTimeoutSec: 1});
+	});
+}
+
 // Add more test cases here
 
 // Close go instance - Leave this as last case!
