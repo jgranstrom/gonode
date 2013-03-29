@@ -70,6 +70,39 @@ exports.testMultipleCmds = function(test) {
 	}
 }
 
+/* Test command limit queue */
+exports.testCommandLimit = function(test) {
+	var json = {
+		'a': {test: 'a'},
+		'b': {test: 'b'},
+		'c': {test: 'c'},
+	}
+
+	var goLimited = new Go({path: './test/delayone.go', maxCommandsRunning: 1, initAtOnce: true}, function(err) {
+		for (j in json) {
+			goLimited.execute(json[j], function(response) 
+			{				
+				// 'a' is the first test that should respod even though it is the only command
+				// that has a delay since we have a maximum command limit of 1. The other commands
+				// should start only when a is done.
+
+				// Even though the other commands are faster, they should not respond
+				test.ok(response.test !== 'b' && response.test  !== 'c');
+
+				if(response.test === 'a') {
+					// We close go here and hence should not get a response from any of the other commands
+					// which should still be in queue
+					goLimited.close();
+
+					test.expect(1);
+					test.done();
+				}
+			});
+		}
+	});
+}
+
+
 /* Add more test cases here */
 
 /* Close go instance - Leave this as last case! */
