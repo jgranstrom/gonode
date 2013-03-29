@@ -1,7 +1,6 @@
 gonode - Go for node.js
-================================
+===
 
-### Todo
-
+### Todo:
 - more error handling
 - additional tests
