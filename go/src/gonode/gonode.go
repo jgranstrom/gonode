@@ -23,8 +23,11 @@
 package gonode
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 )
 
 // Signal constants - internal
@@ -54,10 +57,20 @@ type CommandData map[string]interface{}
 // Each command will be delegated to new go-routines and processed by the provided Processor.
 // This function will return when gonode has been terminated.
 func Start(proc Processor) {
-	for { // Loop forever
-		var s string
-		fmt.Scanf("%s", &s) // Receive data from stdin		
+	reader := bufio.NewReader(os.Stdin)
 
+	for { // Loop forever
+		s, err := reader.ReadString('\n')
+
+		if err != nil {
+			if err == io.EOF { // Return if stream closes
+				return
+			} else {
+				// Write back any stream errors directly to be dispatched by gonode error event
+				fmt.Println(err)
+				continue
+			}
+		}
 		if len(s) < 1 { // Skip empty entries
 			continue
 		}
