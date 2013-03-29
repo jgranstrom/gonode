@@ -20,6 +20,9 @@
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Run benchmarks with 'node run.js' from the /benchmark/ dir
+//
+// Note: These benchmarks are mainly for benchmarking the actual interface implementation,
+// and therefore only uses simple JSON-echoing as commands.
 
 Go = require('../lib/gonode.js').Go;
 
@@ -29,24 +32,60 @@ var go = new Go({path: 'bench.go', initAtOnce: true}, function(err) {
 	})		
 
 	setTimeout(function(go) { // Wait for process to establish itself first
-		benchMany(go);
+		// Do each benchmark in sequence
+		var next = function(i) {
+			benchmarks[i](go, function() {
+				if(++i < benchmarks.length) {
+					next(i);
+				} else {
+					// All done
+					go.close();
+				}
+			})
+		}
+		next(0);
 	}, 1000, go);
 });
 
-// Smash gonode with a lot of commands
-function benchMany(go) {
-	var limit = 9999;
-	
-	bef = new Date();
-	for(var i = 0; i <= limit; i++) {
+var benchmarks = [
+	// Bench single command execution
+	function benchSingle(go, done) {
+		var sumResults = 0,
+			resultCount = 10000,
+			i = 0;
+
 		var f = function(i) {
+			bef = new Date();
 			go.execute({test: 'b'}, function(timeout, response) {
-				if(i >= limit) {
-					console.log((limit + 1) + ' commands in ' + (new Date() - bef) + 'ms');;	
-					go.close();
-				}					
-			});			
-		};
+				sumResults += (new Date() - bef)
+
+				if(i == (resultCount - 1)) {
+					console.log('Average time for single command: ' 
+						+ sumResults / resultCount + 'ms');
+					done();
+				} else {
+					f(i + 1);
+				}
+			});	
+		};	
 		f(i);
-	}
-}
+	},
+	// Smash gonode with a lot of commands
+	function benchMany(go, done) {
+		var limit = 9999;
+		
+		bef = new Date();
+		for(var i = 0; i <= limit; i++) {
+			var f = function(i) {
+				go.execute({test: 'b'}, function(timeout, response) {
+					if(i >= limit) {
+						console.log((limit + 1) + ' commands in ' + (new Date() - bef) + 'ms');;	
+						done();
+					}					
+				});			
+			};
+			f(i);
+		}
+	},
+	// Add more benchmarks here
+]
