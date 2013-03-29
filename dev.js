@@ -7,18 +7,24 @@ go = new Go({path: 'dev.go', initAtOnce: true, maxCommandsRunning: 2}, function(
 		console.log('error: ' + err.parser + ' ' + err.data);
 	})		
 
-	go.execute({test: 'a'}, response, {commandTimeoutSec: 10});
+	go.execute({test: 'a'}, response, {commandTimeoutSec: 2});
 	go.execute({test: 'b'}, response);
 	go.execute({test: 'c'}, response);
 	go.execute({test: 'd'}, response);
 	go.execute({test: 'e'}, response);
 });
 
-function response(r) {
-	console.log(r);
+function response(timeout, r) {
+	if(!timeout) {
+		console.log(r);
 
-	// Close on "last" response
-	if(r.test === "a") {
-		go.close();
+		// Close on "last" response
+		if(r.test === "a") {
+			go.close();
+		}	
 	}
+	else {
+		console.log("timeout");
+		go.close();
+	}	
 }

@@ -35,7 +35,7 @@ exports.testInit = function(test) {
 exports.testJSONEcho = function(test) {
 	var jsonData = {test: 'stuff', array: [1, 2, 3]};
 
-	goInstance.execute(jsonData, function(response) {
+	goInstance.execute(jsonData, function(timeout, response) {
 		test.equal(response.test, 'stuff');
 		test.equal(JSON.stringify(response.array), JSON.stringify([1, 2, 3]));
 
@@ -58,7 +58,7 @@ exports.testMultipleCmds = function(test) {
 
 	// Make sure each executed command is returned, and only once
 	for (j in json) {
-		goInstance.execute(json[j], function(response) {
+		goInstance.execute(json[j], function(timeout, response) {
 			test.ok(json[response.index].index === response.index);
 			delete json[response.index]
 			count--;
@@ -80,7 +80,7 @@ exports.testCommandLimit = function(test) {
 
 	var goLimited = new Go({path: './test/delayone.go', maxCommandsRunning: 1, initAtOnce: true}, function(err) {
 		for (j in json) {
-			goLimited.execute(json[j], function(response) 
+			goLimited.execute(json[j], function(timeout, response) 
 			{				
 				// 'a' is the first test that should respod even though it is the only command
 				// that has a delay since we have a maximum command limit of 1. The other commands
