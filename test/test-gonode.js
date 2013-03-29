@@ -12,13 +12,13 @@ exports.testInit = function(test) {
 	test.throws(function(){new Go();});
 
 	// Fail init if file does not exists
-	go = new Go('./thisfiledoesnotexist123.go');	
+	go = new Go({path: './thisfiledoesnotexist123.go'});	
 	go.init(function(err){
 		test.ok(err); // Make sure error is not null when there should be an error
 
 		// Does not fail init if file exists
 		// Also setup the test instance to use for further tests
-		goInstance = new Go('./test/echo.go');
+		goInstance = new Go({path: './test/echo.go'});
 		goInstance.on('error', function(err) {
 			console.log(err.data.toString());
 		});

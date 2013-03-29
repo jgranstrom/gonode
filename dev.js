@@ -2,7 +2,7 @@
 Go = require('./lib/gonode.js').Go;
 
 // Dev stuff below
-go = new Go('dev.go', true, function(err) {
+go = new Go({path: 'dev.go', initAtOnce: true}, function(err) {
 	go.on('error', function(err) {
 		console.log('error: ' + err.parser + ' ' + err.data);
 	})		
