@@ -1,7 +1,6 @@
 package main
 
 import "gonode"
-import "time"
 
 func main() {
 	gonode.Start(process)

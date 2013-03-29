@@ -122,6 +122,36 @@ exports.testCommandLimit = function(test) {
 	});
 }
 
+// Test command timeouts
+exports.testCommandTimeout = function(test) {
+	var aCompleted,
+		bCompleted;
+	var goLimited = new Go({path: './test/delayone.go', initAtOnce: true}, function(err) {
+		goLimited.execute({test: 'b'}, function(timeout, response) {
+			test.ok(!timeout); // Should not time out
+			bCompleted = true;
+
+			if(aCompleted) {
+				goLimited.close();
+				test.expect(2);
+				test.done();
+				return;
+			}
+		});
+		goLimited.execute({test: 'a'}, function(timeout, response) {			
+			// execution is delayed på one second in delayone.go
+			test.ok(timeout); // It should time out
+			aCompleted = true;
+
+			if(bCompleted) {
+				goLimited.close();
+				test.expect(2);
+				test.done();
+				return;
+			}
+		}, {commandTimeoutSec: 0.5});
+	});
+}
 
 // Add more test cases here
 
