@@ -1,9 +1,7 @@
-gonode
+gonode - Go for node.js
 ================================
 
-Tasks
--------------------------
-- [x] command limit and queue
-- [x] command timeout
-- [ ] more error handling
-- [ ] additional tests
+### Todo
+
+- more error handling
+- additional tests
