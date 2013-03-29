@@ -7,7 +7,7 @@ go = new Go({path: 'dev.go', initAtOnce: true}, function(err) {
 		console.log('error: ' + err.parser + ' ' + err.data);
 	})		
 
-	go.execute({test: 'a'}, response);
+	go.execute({test: 'a'}, response, {commandTimeoutSec: 10});
 	go.execute({test: 'b'}, response);
 	go.execute({test: 'c'}, response);
 	go.execute({test: 'd'}, response);
