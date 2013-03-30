@@ -92,7 +92,7 @@ As you can see `close()` should be called when you no longer need the Go object 
 
 ## Executing commands
 
-Running commands with gonode is really simple, the following is a example presuming go is an initialized Go object:
+Running commands with gonode is really simple, the following is an example presuming go is an initialized Go object:
 
 ```js
 go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
@@ -104,9 +104,44 @@ go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
 });
 ```
 
-`execute()` accept a JSON object to be sent to the Go process, and a callback which will be called when Go returns with a result. `timeout` is true if the command for some reason timed out before a response was returned. `response` will contain a JSON object with the result of the response.
+`execute()` accepts a JSON object to be sent to the Go process, and a callback which will be called when Go returns with a result or when the command reaches a timeout limit. 
+`timeout` is true if the command for some reason timed out before a response was returned. 
+`response` will contain a JSON object with the result of the response.
 
-Note that the JSON object to send could contain anything containable in JSON and in arbitrary structure, and the JSON object returned does not have to obey to any structure or the sent object as they are completely independent. The structure of the returned object are decided in Go.
+Note that the JSON object to send can contain anything containable in JSON and in arbitrary structure, and the JSON object returned does not have to obey to any structure of the sent object as they are completely independent. The structure of the returned object is decided in Go.
+
+Processing the command in Go is possibly even simpler:
+
+```go
+func process(cmd gonode.CommandData) (response gonode.CommandData) {	
+	response = make(gonode.CommandData)
+
+	if(cmd["test"] == "Hello") {
+		response["text"] = "Well hello there!"
+	} else {
+		response["text"] = "What?"
+	}
+
+	return
+}
+```
+
+Each command sent to Go will be sent to the provided `process()` and `cmd` will contain a `CommandData` object (a wrapper for `map[string]interface{}`) which will be a representation of the JSON object received from node.
+Each `process()` call should return a `CommandData` object containing any data to be part of the response back to node. The response object will also be transmitted as JSON.
+
+###### Command options
+* `commandTimeoutSec`: Setting this will override the `defaultCommandTimeoutSec` set for the Go object for a specific command. (Default: `defaultCommandTimeoutSec` of the Go object)
+
+Command options can be provided in any call to `execute()` as such:
+```js
+go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
+	if(timeout) {
+		console.log('Command timed out!');
+	} else {
+		console.log('Go responded: ' + response.text);
+	}	
+}, {commandTimeoutSec: 60}); // This command will execute for up to one minute before timing out
+```
 
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
 [Go]: http://golang.org/doc/install#install
