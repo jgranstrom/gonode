@@ -31,7 +31,7 @@ go.init(function(err) {
 	if (err) throw err;
 
 	// TODO: Add code to execute commands
-	
+
 	go.close();
 });
 ```
@@ -52,6 +52,33 @@ func process(cmd gonode.CommandData) (response gonode.CommandData) {
 	return cmd
 }
 ```
+
+## Initializing gonode
+
+You can either initialize gonode by explicitly calling `init()` or by settings the options `initAtOnce` to `true` and optionally provide the initialization callback directly while creating the Go-object.
+
+```js
+var Go = require('gonode').Go;
+
+var options = {
+	path	: 'gofile.go',
+	initAtOnce: true,	
+}
+var go = new Go(options, function(err) {
+	if (err) throw err;
+
+	// TODO: Add code to execute commands
+
+	go.close();
+});
+```
+
+###### Initialization options
+* `path`: The path to the go-file to execute. (required)
+* `initAtOnce`: Will initialize Go at once when object created and allows initialization callback to be provided in constructor. (Default: `false`)
+* `maxCommandsRunning`: Specifies the maximum number of commands allowed to be running simultaneously, may impact performance differently depending on Go implementation. (Default: `10`)
+* `defaultCommandTimeoutSec`: Specifies the default command timeout in seconds to be used when not specified in command options. (Default: `5`)
+* `cwd`: The working directory of the Go process. (Default: Current working directory of node process)
 
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
 [Go]: http://golang.org/doc/install#install
