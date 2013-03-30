@@ -1,11 +1,11 @@
+<img src="http://i49.tinypic.com/345zgbd.png">
+
 gonode - Go for node.js
 ===
 
-<img src="http://i49.tinypic.com/345zgbd.png">
-
 ## What is gonode?
 
-**gonode** act as a bridge between Go and node.js. It introduces a way to combine the asynchronous nature of node with the simplicity of concurrency in Go. gonode will in a non-blocking fashion run Go code directly from within your node modules, and asynchronously return results from Go. You can code anything you wish as long as the required communication between Go and node.js can be represented with JSON.
+**gonode** acts as a bridge between Go and node.js. It introduces a way to combine the asynchronous nature of node with the simplicity of concurrency in Go. gonode will in a non-blocking fashion run Go code directly from within your node modules, and asynchronously return results from Go. You can code anything you wish as long as the required communication between Go and node.js can be represented with JSON.
 
 ## Install
 
