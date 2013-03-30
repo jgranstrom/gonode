@@ -1,11 +1,8 @@
 {
   "name": "gonode",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "gonode - Go for node.js",
   "main": "./lib/gonode.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "nodeunit test"
   },
@@ -19,7 +16,7 @@
     "go",
     "golang"
   ],
-  "author": "John Granström",
+  "author": "John Granström <granstrom.john@gmail.com>",
   "license": "MIT",
   "gitHead": "34a011c73e39ac8beddc5fabe9cdc11b2167c40d",
   "readmeFilename": "README.md"
