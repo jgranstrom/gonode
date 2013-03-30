@@ -3,7 +3,7 @@ gonode - Go for node.js
 
 ## What is gonode?
 
-**gonode** act as a bridge between Go and node.js. It introduces a way to combine the asynchronous nature of node with the simplicity of concurrency in Go. **gonode** will in a non-blocking fashion run Go code directly from within your node modules, and asynchronously return results from Go. You can code anything you wish as long as the required communication between Go and node.js can be represented with JSON.
+**gonode** act as a bridge between Go and node.js. It introduces a way to combine the asynchronous nature of node with the simplicity of concurrency in Go. gonode will in a non-blocking fashion run Go code directly from within your node modules, and asynchronously return results from Go. You can code anything you wish as long as the required communication between Go and node.js can be represented with JSON.
 
 ## Install
 
@@ -102,12 +102,12 @@ go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 });
 ```
 
-`execute()` accepts a JSON object to be sent to the Go process, and a callback which will be called when Go returns with a result or when the command reaches a timeout limit. 
+`execute()` accepts a JSON object to be sent to the Go process, and a callback which will be called when Go returns with a result or when the command reaches a timeout limit or is terminated. 
 `result` represents the result of the execution of this command.
 `response` will contain a JSON object with the result of the response only if `result.ok` is set to `true`.
 
 `result` may have one and only one of the following set to `true`:
-* `ok`: The command has executed and responded as expected, results are in `response`.
+* `ok`: The command has executed and responded as expected, response data are in `response`.
 * `timeout`: The command reached a timeout by exceeding the set execution time limit.
 * `terminated`: The command has been internally terminated prior to responding. This is set when external errors are raised, such as Go panic.
 
@@ -137,7 +137,7 @@ Each `process()` call must return a `CommandData` object containing any data to 
 ###### Command options
 * `commandTimeoutSec`: Setting this will override the `defaultCommandTimeoutSec` set for the Go object for a specific command. *(Default: `defaultCommandTimeoutSec` of the Go object)*
 
-**Command options** can be provided in any call to `execute()` as such:
+Command options can be provided in any call to `execute()` as such:
 ```js
 go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 	if(result.ok) {
@@ -146,6 +146,30 @@ go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 		console.log('Command timed out!');
 	}	
 }, {commandTimeoutSec: 60}); // This command will execute for up to one minute before timing out
+```
+
+## Closing gonode
+
+There are two ways of closing gonode which is calling one of the following:
+
+* `close()`: Go will be closed when all running commands has finished. No more calls to `execute()` will be allowed after this call, but callbacks for already running commands may still be called. When the callback of the last running command has been returned, Go will close gracefully. Calls to this return `true` if a close has been scheduled, or `false` if either Go is not initialized or if a close/termination is already pending. Calling `close()` more than once has no significant meaning.
+* `terminate()`: Go will be terminated immediately. No more calls to `execute()` will be allowed after this call, and callbacks for already running commands will be called immediately with ´result.terminated´ set to `true`. Calls to this return `true` if a termination has been scheduled, or `false` if either Go is not initialized or if a termination is already pending. Calling `terminate()` more than once has no significant meaning.
+
+Example:
+
+```js
+// Execute some long running command
+go.execute({text: 'I will run for quite a while!'}, function(result, response) {
+	if(result.ok) {
+		console.log('Go responded: ' + response.text);
+	} else if(result.timeout) {
+		console.log('Command timed out!');
+	} else if(result.terminated) {
+		console.log('Command was terminated!');
+	}
+});
+//go.terminate(); // This line would most likely cause the above command to terminate
+//go.close(); // This would cause gonode to close after the above command has finished
 ```
 
 ## Error handling
