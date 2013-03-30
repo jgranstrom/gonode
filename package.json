@@ -4,11 +4,15 @@
   "description": "gonode - Go for node.js",
   "main": "./lib/gonode.js",
   "scripts": {
-    "test": "nodeunit test"
+    "test": "nodeunit test",
+    "install": "go get github.com/jgranstrom/gonodepkg"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/jgranstrom/gonode.git"
+  },
+  "devDependencies": {
+    "nodeunit": "*"
   },
   "keywords": [
     "node",
