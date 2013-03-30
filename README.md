@@ -171,12 +171,12 @@ go.execute({text: 'I will run for quite a while!'}, function(result, response) {
 //go.terminate(); // This line would most likely cause the above command to terminate
 //go.close(); // This would cause gonode to close after the above command has finished
 
-*Note:* It is important to close gonode when you no longer need it, otherwise you will leave Go hanging while waiting for more command to execute. It would waste precious resources and also keep your node process from exiting when you would expect it to.
+*Important:* Always close gonode when you no longer need it, otherwise you will leave Go hanging while waiting for more command to execute. It would waste precious resources and also keep your node process from exiting when you would expect it to.
 ```
 
 ## Error handling
 
-gonode comes with some error handling concerning the Go process as well as JSON parsing errors. On all errors, except for initialization, gonode will emit the `error` event with information regarding the event. Such events are raised for example when a panic occures within Go or when there are errors parsing JSON. The error object has two properties;
+gonode comes with some error handling concerning the Go process as well as JSON parsing errors. On all errors, except for initialization, gonode will emit the `error` event with information regarding the event. Such events are raised for example when a panic occurs within Go or when there are errors parsing JSON. The error object has two properties;
 * `parser`: `true` if the error is caused by internal parsing errors, otherwise `false.
 * `data`: Contains the actual error data which may be error output from Go possibly including stack trace
 
@@ -207,7 +207,7 @@ var go = new Go({
 });
 ```
 
-An external error causing the error event to emit with `parser` set to `false` will also cause gonode to terminate. That means such errors are fatal and would require gonode to be reinitialized. Also it will cause all running commands to be immediately terminated, i.e. their callbacks will be invoked with `result.terminated` set to `true`.
+*Important:* An external error causing the error event to emit with `parser` set to `false` will also cause gonode to terminate. That means such errors are fatal and would require gonode to be reinitialized. Also it will cause all running commands to be immediately terminated, i.e. their callbacks will be invoked with `result.terminated` set to `true`.
 
 *Note:* a big error output like a stack trace caused by a panic may be split up into several error events containing parts of the total output.
 
