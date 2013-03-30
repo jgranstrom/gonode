@@ -1,6 +1,8 @@
 package main
 
-import "gonode"
+// Import the gonode package from the default install location
+// and give it a name for easy access.
+import gonode "github.com/jgranstrom/gonodepkg"
 
 func main() {	
 	// Start the gonode listener which is an infinite loop until closed

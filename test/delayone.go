@@ -21,18 +21,18 @@
 
 package main
 
-import "gonode"
+import g "github.com/jgranstrom/gonodepkg"
 import "time"
 
 func main() {
-	gonode.Start(process)
+	g.Start(process)
 }
 
 type MyCommand struct {
 	Test string
 }
 
-func process(cmd gonode.CommandData) (resp gonode.CommandData) {
+func process(cmd g.CommandData) (resp g.CommandData) {
 	if(cmd["test"] == "a") { // Delay some command
 		time.Sleep(time.Second)
 	}

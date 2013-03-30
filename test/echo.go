@@ -21,7 +21,7 @@
 
 package main
 
-import g "gonode"
+import g "github.com/jgranstrom/gonodepkg"
 
 func main() {	
 	g.Start(func(cmd g.CommandData) (resp g.CommandData) {

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gonode"
+	gonode "github.com/jgranstrom/gonodepkg"
 	"time"
 )
 

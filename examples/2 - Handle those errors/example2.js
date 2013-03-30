@@ -28,6 +28,7 @@ var go = new Go({path: 'example2.go', initAtOnce: true}, function(err) {
 	}, {commandTimeoutSec: 1}); // We specifically set this command to timeout after 1 seconds
 
 	// Also execute command #2 which we have constructed to raise an error
+	// Note that this will produce a lot of output!
 	go.execute({text: 'crash me'}, function(timeout, response) {
 		if(timeout) {
 			// Execution time may exceed the user set or default time limit for commands

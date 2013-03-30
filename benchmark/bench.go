@@ -1,6 +1,6 @@
 package main
 
-import "gonode"
+import gonode "github.com/jgranstrom/gonodepkg"
 
 func main() {
 	gonode.Start(process)
