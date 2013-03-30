@@ -150,10 +150,10 @@ go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 
 ## Closing gonode
 
-There are two ways of closing gonode which is calling one of the following:
+There are two ways of closing gonode:
 
 * `close()`: Go will be closed when all running commands has finished. No more calls to `execute()` will be allowed after this call, but callbacks for already running commands may still be called. When the callback of the last running command has been returned, Go will close gracefully. Calls to this return `true` if a close has been scheduled, or `false` if either Go is not initialized or if a close/termination is already pending. Calling `close()` more than once has no significant meaning.
-* `terminate()`: Go will be terminated immediately. No more calls to `execute()` will be allowed after this call, and callbacks for already running commands will be called immediately with ´result.terminated´ set to `true`. Calls to this return `true` if a termination has been scheduled, or `false` if either Go is not initialized or if a termination is already pending. Calling `terminate()` more than once has no significant meaning.
+* `terminate()`: Go will be terminated immediately. No more calls to `execute()` will be allowed after this call, and callbacks for already running commands will be called immediately with `result.terminated` set to `true`. Calls to this return `true` if a termination has been scheduled, or `false` if either Go is not initialized or if a termination is already pending. Calling `terminate()` more than once has no significant meaning.
 
 Example:
 
@@ -170,6 +170,8 @@ go.execute({text: 'I will run for quite a while!'}, function(result, response) {
 });
 //go.terminate(); // This line would most likely cause the above command to terminate
 //go.close(); // This would cause gonode to close after the above command has finished
+
+*Note:* It is important to close gonode when you no longer need it, otherwise you will leave Go hanging while waiting for more command to execute. It would waste precious resources and also keep your node process from exiting when you would expect it to.
 ```
 
 ## Error handling
@@ -205,7 +207,7 @@ var go = new Go({
 });
 ```
 
-It is important to consider that any commands in execution when an error like a panic causes the Go process to terminate will eventually time out. Take this into account when implementing things like retry for commands.
+An external error causing the error event to emit with `parser` set to `false` will also cause gonode to terminate. That means such errors are fatal and would require gonode to be reinitialized. Also it will cause all running commands to be immediately terminated, i.e. their callbacks will be invoked with `result.terminated` set to `true`.
 
 *Note:* a big error output like a stack trace caused by a panic may be split up into several error events containing parts of the total output.
 
