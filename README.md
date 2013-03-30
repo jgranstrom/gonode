@@ -1,7 +1,7 @@
-<img src="http://i49.tinypic.com/345zgbd.png">
-
 gonode - Go for node.js
 ===
+
+<img src="http://i49.tinypic.com/345zgbd.png">
 
 ## What is gonode?
 
