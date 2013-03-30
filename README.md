@@ -178,8 +178,7 @@ var go = new Go({
 
 It is important to consider that any commands in execution when an error like a panic causes the Go process to terminate will eventually time out. Take this into account when implementing things like retry for commands.
 
-*Note: * a big error output like a stack trace caused by a panic may be split up into several error events containing parts of the total output.
-
+*Note:* a big error output like a stack trace caused by a panic may be split up into several error events containing parts of the total output.
 
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
 [Go]: http://golang.org/doc/install#install
