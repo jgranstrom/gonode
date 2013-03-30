@@ -145,7 +145,7 @@ go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
 
 ## Error handling
 
-gonode comes with some error handling concerning the Go process as well as JSON parsing errors. On all errors, except for initialization, gonode will emit the `error` event with information regarding the event. Such events are raised for example when a panic occured within Go or when there are errors parsing JSON. The error object has two properties;
+gonode comes with some error handling concerning the Go process as well as JSON parsing errors. On all errors, except for initialization, gonode will emit the `error` event with information regarding the event. Such events are raised for example when a panic occures within Go or when there are errors parsing JSON. The error object has two properties;
 * `parser`: `true` if the error is caused by internal parsing errors, otherwise `false.
 * `data`: Contains the actual error data which may be error output from Go possibly including stack trace
 
