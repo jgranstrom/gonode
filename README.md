@@ -15,6 +15,14 @@ Then install gonode by running:
 npm install gonode
 ```
 
+You should now be all set up and no more commands are required.
+
+*Note:* Even though gonodepkg is installed automatically with gonode you may find yourself in need of installing it explicitly. Install gonodepkg by itself by running:
+
+```bash
+go get github.com/jgranstrom/gonodepkg
+```
+
 ## Introduction
 
 To set up communications you need to initiate the gonode module in node and also start the gonodepkg in Go.
@@ -55,14 +63,14 @@ func process(cmd gonode.CommandData) (response gonode.CommandData) {
 
 ## Initializing gonode
 
-You can either initialize gonode by explicitly calling `init()` or by settings the options `initAtOnce` to `true` and optionally provide the initialization callback directly while creating the Go-object.
+You can initialize gonode either by explicitly calling `init()` or by settings the option `initAtOnce` to `true` and optionally provide the initialization callback directly in to Go constructor.
 
 ```js
 var Go = require('gonode').Go;
 
 var options = {
-	path	: 'gofile.go',
-	initAtOnce: true,	
+	path		: 'gofile.go',
+	initAtOnce	: true,	
 }
 var go = new Go(options, function(err) {
 	if (err) throw err;
@@ -73,12 +81,32 @@ var go = new Go(options, function(err) {
 });
 ```
 
+As you can see `close()` should be called when you no longer need the Go object and will gracefully end the Go process and all communication with node.
+
 ###### Initialization options
-* `path`: The path to the go-file to execute. (required)
-* `initAtOnce`: Will initialize Go at once when object created and allows initialization callback to be provided in constructor. (Default: `false`)
+* `path`: The path of the go-file to execute. (Required)
+* `initAtOnce`: Will initialize Go at once when object created if `true`, and allows initialization callback to be provided in constructor. (Default: `false`)
 * `maxCommandsRunning`: Specifies the maximum number of commands allowed to be running simultaneously, may impact performance differently depending on Go implementation. (Default: `10`)
 * `defaultCommandTimeoutSec`: Specifies the default command timeout in seconds to be used when not specified in command options. (Default: `5`)
-* `cwd`: The working directory of the Go process. (Default: Current working directory of node process)
+* `cwd`: The working directory of the Go process. (Default: Current working directory of the node process)
+
+## Executing commands
+
+Running commands with gonode is really simple, the following is a example presuming go is an initialized Go object:
+
+```js
+go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
+	if(timeout) {
+		console.log('Command timed out!');
+	} else {
+		console.log('Go responded: ' + response.text);
+	}	
+});
+```
+
+`execute()` accept a JSON object to be sent to the Go process, and a callback which will be called when Go returns with a result. `timeout` is true if the command for some reason timed out before a response was returned. `response` will contain a JSON object with the result of the response.
+
+Note that the JSON object to send could contain anything containable in JSON and in arbitrary structure, and the JSON object returned does not have to obey to any structure or the sent object as they are completely independent. The structure of the returned object are decided in Go.
 
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
 [Go]: http://golang.org/doc/install#install
