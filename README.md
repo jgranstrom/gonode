@@ -116,7 +116,7 @@ Processing the command in Go is possibly even simpler:
 func process(cmd gonode.CommandData) (response gonode.CommandData) {	
 	response = make(gonode.CommandData)
 
-	if(cmd["test"] == "Hello") {
+	if(cmd["text"] == "Hello") {
 		response["text"] = "Well hello there!"
 	} else {
 		response["text"] = "What?"
@@ -126,8 +126,8 @@ func process(cmd gonode.CommandData) (response gonode.CommandData) {
 }
 ```
 
-Each command sent to Go will be sent to the provided `process()` and `cmd` will contain a `CommandData` object (a wrapper for `map[string]interface{}`) which will be a representation of the JSON object received from node.
-Each `process()` call should return a `CommandData` object containing any data to be part of the response back to node. The response object will also be transmitted as JSON.
+Each command sent to Go will be delegated to the provided `process()` on a new go-routine and `cmd` will contain a `CommandData` object (a wrapper for `map[string]interface{}`) which will be a representation of the JSON object received from node.
+Each `process()` call must return a `CommandData` object containing any data to be part of the response back to node. The response object will, like the command object, be transmitted in JSON.
 
 ###### Command options
 * `commandTimeoutSec`: Setting this will override the `defaultCommandTimeoutSec` set for the Go object for a specific command. (Default: `defaultCommandTimeoutSec` of the Go object)
