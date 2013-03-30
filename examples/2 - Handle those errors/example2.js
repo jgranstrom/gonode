@@ -18,10 +18,10 @@ var go = new Go({path: 'example2.go', initAtOnce: true}, function(err) {
 	});
 
 	// Execute command #1 which we have constructed to timeout
-	go.execute({text: 'delay me'}, function(timeout, response) {
-		if(timeout) {
+	go.execute({text: 'delay me'}, function(result, response) {
+		if(result.timeout) { 
 			// Execution time may exceed the user set or default time limit for commands
-			console.log('The \'delay me\' command timed out!');
+			console.log('The \'delay me\' command timed out!\n\n');
 		} else {
 			console.log('Go responded: ' + response.text);
 		}
@@ -29,31 +29,28 @@ var go = new Go({path: 'example2.go', initAtOnce: true}, function(err) {
 
 	// Also execute command #2 which we have constructed to raise an error
 	// Note that this will produce a lot of output!
-	go.execute({text: 'crash me'}, function(timeout, response) {
-		if(timeout) {
-			// Execution time may exceed the user set or default time limit for commands
-			// Note that commands that causes Go to fail in panic will also timeout when
-			// timeout reached
-			// Also any commands executed after Go has crashed will eventually timeout
-			console.log('The \'crash me\' command timed out!');
+	go.execute({text: 'crash me'}, function(result, response) {
+		if(result.terminated) {
+			// External errors like Go panic will terminate the command that caused the
+			// error as well as any other running command at that point
+			console.log('The \'crash me\' command was terminated!\n\n');
 		} else {
 			console.log('Go responded: ' + response.text);
 		}
-
-		// Close go when the last command reaches end of execution
-		go.close();
-		// Is this really needed this time?
-		// Technically, no, Go has already exited by panic which is handled by gonode, but to be safe
-		// we always include go.close(), calling close() more than once is not an issue, better safe than sorry.
 	});
 
 	// To be complete we also execute a command which we expect to succeed
-	go.execute({text: 'respond me'}, function(timeout, response) {
-		if(timeout) {
-			// Execution time may exceed the user set or default time limit for commands
-			console.log('The \'respond me\' command timed out!');
+	go.execute({text: 'respond me'}, function(result, response) {
+		if(!result.ok) { // result.ok is set iff everything went well
+			console.log('Something went wrong with the \'respond me\' command!');
 		} else {
-			console.log('Go responded: ' + response.text);
+			console.log('Go responded: ' + response.text + '\n\n');
 		}
 	});
+
+	// Close go
+	go.close();
+	// Is this really needed this time?
+	// Technically, no, Go has already exited by panic which is handled by gonode, but to be safe
+	// we always include go.close(), calling close() more than once is not an issue, better safe than sorry.
 });

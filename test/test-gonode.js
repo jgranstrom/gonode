@@ -55,7 +55,7 @@ exports.testInit = function(test) {
 exports.testJSONEcho = function(test) {
 	var jsonData = {test: 'stuff', array: [1, 2, 3]};
 
-	goInstance.execute(jsonData, function(timeout, response) {
+	goInstance.execute(jsonData, function(result, response) {
 		test.equal(response.test, 'stuff');
 		test.equal(JSON.stringify(response.array), JSON.stringify([1, 2, 3]));
 
@@ -78,7 +78,7 @@ exports.testMultipleCmds = function(test) {
 
 	// Make sure each executed command is returned, and only once
 	for (j in json) {
-		goInstance.execute(json[j], function(timeout, response) {
+		goInstance.execute(json[j], function(result, response) {
 			test.ok(json[response.index].index === response.index);
 			delete json[response.index]
 			count--;
@@ -100,7 +100,7 @@ exports.testCommandLimit = function(test) {
 
 	var goLimited = new Go({path: './test/delayone.go', maxCommandsRunning: 1, initAtOnce: true}, function(err) {
 		for (j in json) {
-			goLimited.execute(json[j], function(timeout, response) 
+			goLimited.execute(json[j], function(result, response) 
 			{				
 				// 'a' is the first test that should respod even though it is the only command
 				// that has a delay since we have a maximum command limit of 1. The other commands
@@ -111,14 +111,14 @@ exports.testCommandLimit = function(test) {
 
 				if(response.test === 'a') {
 					// We close go here and hence should not get a response from any of the other commands
-					// which should still be in queue
-					goLimited.close();
-
+					// which should still be in queue					
 					test.expect(1);
 					test.done();
 				}
 			});
 		}
+
+		goLimited.close();
 	});
 }
 
@@ -127,33 +127,32 @@ exports.testCommandTimeout = function(test) {
 	var aCompleted,
 		bCompleted;
 	var goLimited = new Go({path: './test/delayone.go', initAtOnce: true}, function(err) {
-		goLimited.execute({test: 'b'}, function(timeout, response) {
-			test.ok(!timeout); // Should not time out
+		goLimited.execute({test: 'b'}, function(result, response) {
+			test.ok(!result.timeout); // Should not time out
 			bCompleted = true;
 
 			if(aCompleted) {
-				goLimited.close();
 				test.expect(2);
 				test.done();
 				return;
 			}
 		});
-		goLimited.execute({test: 'a'}, function(timeout, response) {			
+		goLimited.execute({test: 'a'}, function(result, response) {			
 			// execution is delayed på one second in delayone.go
-			test.ok(timeout); // It should time out
+			test.ok(result.timeout); // It should time out
 			aCompleted = true;
 
 			if(bCompleted) {
-				goLimited.close();
 				test.expect(2);
 				test.done();
 				return;
 			}
 		}, {commandTimeoutSec: 0.5});
+		goLimited.close();
 	});
 }
 
-// Test that panics are handled accordingly with error event and command timeout
+// Test that panics are handled accordingly with error event and command termination
 exports.testPanicHandling = function(test) {
 	var goPanic = new Go({path: './test/panic.go', initAtOnce: true}, function(err) {
 		var hasError,
@@ -165,24 +164,39 @@ exports.testPanicHandling = function(test) {
 				hasError = true;
 				test.ok(err);
 				test.ok(!err.parser);
-
+				
 				if(hasTimedout) {
 					test.expect(assertCount);
-					test.done();
-					goPanic.close();
+					test.done();					
 				}
 			}
 		});
 
-		goPanic.execute({test: 'a'}, function(timeout, response) {
-			test.ok(timeout);
-
-			if(hasError) {
+		goPanic.execute({test: 'a'}, function(result, response) {			
+			test.ok(result.terminated); // Result should be terminated when panic happened
+			hasTimedout = true;
+			if(hasError) {				
 				test.expect(assertCount);
 				test.done();
-				goPanic.close();
 			}			
-		}, {commandTimeoutSec: 1});
+		});
+
+		goPanic.close();
+	});
+}
+
+// Test command terminations
+exports.testCommandTerminated = function(test) {
+	var goLimited = new Go({path: './test/delayone.go', initAtOnce: true}, function(err) {
+		goLimited.execute({test: 'a'}, function(result, response) {
+			test.ok(result.terminated);
+			test.expect(4);
+			test.done();
+		});
+
+		test.ok(goLimited.terminate()); // Terminate should return true
+		test.ok(!goLimited.terminate()); // Another one should return false
+		test.ok(!goLimited.close()); // Close() after termination should return false
 	});
 }
 
