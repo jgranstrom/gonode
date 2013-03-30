@@ -180,6 +180,10 @@ It is important to consider that any commands in execution when an error like a 
 
 *Note:* a big error output like a stack trace caused by a panic may be split up into several error events containing parts of the total output.
 
+## Todo
+
+* Improved error handling
+
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
 [Go]: http://golang.org/doc/install#install
 [GOPATH]: http://golang.org/doc/code.html#tmp_2
