@@ -84,11 +84,11 @@ var go = new Go(options, function(err) {
 As you can see `close()` should be called when you no longer need the Go object and will gracefully end the Go process and all communication with node.
 
 ###### Initialization options
-* `path`: The path of the go-file to execute. (Required)
-* `initAtOnce`: Will initialize Go at once when object created if `true`, and allows initialization callback to be provided in constructor. (Default: `false`)
-* `maxCommandsRunning`: Specifies the maximum number of commands allowed to be running simultaneously, may impact performance differently depending on Go implementation. (Default: `10`)
-* `defaultCommandTimeoutSec`: Specifies the default command timeout in seconds to be used when not specified in command options. (Default: `5`)
-* `cwd`: The working directory of the Go process. (Default: Current working directory of the node process)
+* `path`: The path of the go-file to execute. *(Required)*
+* `initAtOnce`: Will initialize Go at once when object created if `true`, and allows initialization callback to be provided in constructor. *(Default: `false`)*
+* `maxCommandsRunning`: Specifies the maximum number of commands allowed to be running simultaneously, may impact performance differently depending on Go implementation. *(Default: `10`)*
+* `defaultCommandTimeoutSec`: Specifies the default command timeout in seconds to be used when not specified in command options. *(Default: `5`)*
+* `cwd`: The working directory of the Go process. *(Default: Current working directory of the node process)*
 
 ## Executing commands
 
@@ -130,7 +130,7 @@ Each command sent to Go will be delegated to the provided `process()` on a new g
 Each `process()` call must return a `CommandData` object containing any data to be part of the response back to node. The response object will, like the command object, be transmitted in JSON.
 
 ###### Command options
-* `commandTimeoutSec`: Setting this will override the `defaultCommandTimeoutSec` set for the Go object for a specific command. (Default: `defaultCommandTimeoutSec` of the Go object)
+* `commandTimeoutSec`: Setting this will override the `defaultCommandTimeoutSec` set for the Go object for a specific command. *(Default: `defaultCommandTimeoutSec` of the Go object)*
 
 Command options can be provided in any call to `execute()` as such:
 ```js
