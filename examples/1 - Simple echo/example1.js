@@ -17,8 +17,10 @@ function initComplete(err) {
 
 // Called when Go sends us a response for the command above
 function gotResponse(result, response) {
-	// In our case we just echo the command, so we can get our text back	
-	console.log('Go responded: ' + response.text);
+	if(result.ok) { // Check if response is ok
+		// In our case we just echo the command, so we can get our text back	
+		console.log('Go responded: ' + response.text);
+	}	
 }
 
 // Shorthand version of the above

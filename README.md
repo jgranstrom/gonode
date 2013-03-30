@@ -81,7 +81,7 @@ var go = new Go(options, function(err) {
 });
 ```
 
-As you can see `close()` should be called when you no longer need the Go object and will gracefully end the Go process and all communication with node.
+As you can see `close()` should be called when you no longer need the Go object and will gracefully end the Go process when all executing commands has finished.
 
 ###### Initialization options
 * `path`: The path of the go-file to execute. *(Required)*
@@ -92,25 +92,28 @@ As you can see `close()` should be called when you no longer need the Go object 
 
 ## Executing commands
 
-Running commands with gonode is really simple, the following is an example presuming go is an initialized Go object:
+**Running commands with gonode** is really simple, the following is an example presuming go is an initialized Go object:
 
 ```js
-go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
-	if(timeout) {
-		console.log('Command timed out!');
-	} else {
+go.execute({text: 'Hello world from gonode!'}, function(result, response) {
+	if(result.ok) {
 		console.log('Go responded: ' + response.text);
-	}	
+	}
 });
 ```
 
 `execute()` accepts a JSON object to be sent to the Go process, and a callback which will be called when Go returns with a result or when the command reaches a timeout limit. 
-`timeout` is true if the command for some reason timed out before a response was returned. 
-`response` will contain a JSON object with the result of the response.
+`result` represents the result of the execution of this command.
+`response` will contain a JSON object with the result of the response only if `result.ok` is set to `true`.
+
+`result` may have one and only one of the following set to `true`:
+* `ok`: The command has executed and responded as expected, results are in `response`.
+* `timeout`: The command reached a timeout by exceeding the set execution time limit.
+* `terminated`: The command has been internally terminated prior to responding. This is set when external errors are raised, such as Go panic.
 
 Note that the JSON object to send can contain anything containable in JSON and in arbitrary structure, and the JSON object returned does not have to obey to any structure of the sent object as they are completely independent. The structure of the returned object is decided in Go.
 
-Processing the command in Go is possibly even simpler:
+**Processing the command in Go** is possibly even simpler:
 
 ```go
 func process(cmd gonode.CommandData) (response gonode.CommandData) {	
@@ -132,7 +135,7 @@ Each `process()` call must return a `CommandData` object containing any data to 
 ###### Command options
 * `commandTimeoutSec`: Setting this will override the `defaultCommandTimeoutSec` set for the Go object for a specific command. *(Default: `defaultCommandTimeoutSec` of the Go object)*
 
-Command options can be provided in any call to `execute()` as such:
+**Command options** can be provided in any call to `execute()` as such:
 ```js
 go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
 	if(timeout) {
@@ -149,7 +152,7 @@ gonode comes with some error handling concerning the Go process as well as JSON 
 * `parser`: `true` if the error is caused by internal parsing errors, otherwise `false.
 * `data`: Contains the actual error data which may be error output from Go possibly including stack trace
 
-Handlig these errors is straightforward:
+**Handling these errors** is straightforward:
 
 ```js
 var Go = require('gonode').Go;
