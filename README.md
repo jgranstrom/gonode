@@ -111,6 +111,8 @@ go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 * `timeout`: The command reached a timeout by exceeding the set execution time limit.
 * `terminated`: The command has been internally terminated prior to responding. This is set when external errors are raised, such as Go panic.
 
+`execute()` returns `true` if the command has been registered and eventually will be executed, or `false` if the command was ignored either because gonode hasn't been initialized yet, or because gonode is in the process of closing or terminating.
+
 Note that the JSON object to send can contain anything containable in JSON and in arbitrary structure, and the JSON object returned does not have to obey to any structure of the sent object as they are completely independent. The structure of the returned object is decided in Go.
 
 **Processing the command in Go** is possibly even simpler:
@@ -137,11 +139,11 @@ Each `process()` call must return a `CommandData` object containing any data to 
 
 **Command options** can be provided in any call to `execute()` as such:
 ```js
-go.execute({text: 'Hello world from gonode!'}, function(timeout, response) {
-	if(timeout) {
-		console.log('Command timed out!');
-	} else {
+go.execute({text: 'Hello world from gonode!'}, function(result, response) {
+	if(result.ok) {
 		console.log('Go responded: ' + response.text);
+	} else if(result.timeout) {
+		console.log('Command timed out!');
 	}	
 }, {commandTimeoutSec: 60}); // This command will execute for up to one minute before timing out
 ```
