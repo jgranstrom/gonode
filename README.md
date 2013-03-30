@@ -19,7 +19,7 @@ npm install gonode
 
 To set up communications you need to initiate the gonode module in node and also start the gonodepkg in Go.
 
-Initiate in node.js:
+Basic requirements in node.js:
 
 ```js
 var Go = require('gonode').Go;
@@ -29,10 +29,14 @@ var go = new Go({
 
 go.init(function(err) {
 	if (err) throw err;
+
+	// TODO: Add code to execute commands
+	
+	go.close();
 });
 ```
 
-Initiate in Go:
+Basic requirements in Go (gofile.go):
 
 ```go
 package main
