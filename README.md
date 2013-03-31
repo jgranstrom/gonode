@@ -216,6 +216,7 @@ var go = new Go({
 ## Todo
 
 * Improved error handling
+* Significantly improve performance by changing types used in Go
 
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
 [Go]: http://golang.org/doc/install#install
