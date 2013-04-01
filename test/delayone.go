@@ -21,8 +21,11 @@
 
 package main
 
-import g "github.com/jgranstrom/gonodepkg"
-import "time"
+import (
+	g "github.com/jgranstrom/gonodepkg"
+	json "github.com/jgranstrom/go-simplejson"
+	"time"
+)
 
 func main() {
 	g.Start(process)
@@ -32,8 +35,8 @@ type MyCommand struct {
 	Test string
 }
 
-func process(cmd g.CommandData) (resp g.CommandData) {
-	if(cmd["test"] == "a") { // Delay some command
+func process(cmd *json.Json) (resp *json.Json) {
+	if cmd.Get("test").MustString() == "a" { // Delay some command
 		time.Sleep(time.Second)
 	}
 	return cmd

@@ -33,12 +33,14 @@ exports.testInit = function(test) {
 
 	// Fail init if file does not exists
 	go = new Go({path: './thisfiledoesnotexist123.go'});	
+	go.on('error', printError);
 	go.init(function(err){
 		test.ok(err); // Make sure error is not null when there should be an error
 
 		// Does not fail init if file exists
 		// Also setup the test instance to use for further tests
 		goInstance = new Go({path: './test/echo.go'});
+		goInstance.on('error', printError);
 		goInstance.on('error', function(err) {
 			console.log(err.data.toString());
 		});
@@ -99,6 +101,7 @@ exports.testCommandLimit = function(test) {
 	}
 
 	var goLimited = new Go({path: './test/delayone.go', maxCommandsRunning: 1, initAtOnce: true}, function(err) {
+		goLimited.on('error', printError);
 		for (j in json) {
 			goLimited.execute(json[j], function(result, response) 
 			{				
@@ -127,6 +130,7 @@ exports.testCommandTimeout = function(test) {
 	var aCompleted,
 		bCompleted;
 	var goLimited = new Go({path: './test/delayone.go', initAtOnce: true}, function(err) {
+		goLimited.on('error', printError);
 		goLimited.execute({test: 'b'}, function(result, response) {
 			test.ok(!result.timeout); // Should not time out
 			bCompleted = true;
@@ -155,6 +159,7 @@ exports.testCommandTimeout = function(test) {
 // Test that panics are handled accordingly with error event and command termination
 exports.testPanicHandling = function(test) {
 	var goPanic = new Go({path: './test/panic.go', initAtOnce: true}, function(err) {
+		// goPanic.on('error', printError); Will print expected panic
 		var hasError,
 			hasTimedout,
 			assertCount = 3;
@@ -188,6 +193,7 @@ exports.testPanicHandling = function(test) {
 // Test command terminations
 exports.testCommandTerminated = function(test) {
 	var goLimited = new Go({path: './test/delayone.go', initAtOnce: true}, function(err) {
+		goLimited.on('error', printError);
 		goLimited.execute({test: 'a'}, function(result, response) {
 			test.ok(result.terminated);
 			test.expect(4);
@@ -206,4 +212,8 @@ exports.testCommandTerminated = function(test) {
 exports.closeGo = function(test) {
 	goInstance.close();
 	test.done();
+}
+
+function printError(err) {
+	console.log(err.parser ? '(internal) ' : '' + err.data.toString());
 }

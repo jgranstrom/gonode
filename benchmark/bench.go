@@ -1,15 +1,14 @@
 package main
 
-import gonode "github.com/jgranstrom/gonodepkg"
+import (
+	gonode "github.com/jgranstrom/gonodepkg"
+	json "github.com/jgranstrom/go-simplejson"
+)
 
 func main() {
 	gonode.Start(process)
 }
 
-type MyCommand struct {
-	Test string
-}
-
-func process(cmd gonode.CommandData) (resp gonode.CommandData) {
+func process(cmd *json.Json) (resp *json.Json) {
 	return cmd
 }
