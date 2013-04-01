@@ -9,7 +9,7 @@ gonode - Go for node.js
 
 ## Install
 
-First make sure that you have installed [Go][] and set up your [GOPATH][] as the [gonodepkg][] will be automatically installed to the first path specified in your GOPATH.
+First make sure that you have installed [Go][] and set up your [GOPATH][] as [gonodepkg][] and [go-simplejson][] will be automatically installed to the first path specified in your GOPATH.
 
 Then install gonode by running:
 
@@ -19,10 +19,10 @@ npm install gonode
 
 **You should now be all set up and no more commands are required.**
 
-*Note:* Even though gonodepkg is installed automatically with gonode you may find yourself in need of installing it explicitly. Install gonodepkg by itself by running:
+*Note:* Even though the required Go packages are installed automatically with gonode you may find yourself in need of installing or updating them explicitly. In that case do so by running:
 
 ```bash
-go get github.com/jgranstrom/gonodepkg
+go get github.com/jgranstrom/gonodepkg github.com/jgranstrom/go-simplejson
 ```
 
 ## Introduction
@@ -51,13 +51,16 @@ Basic requirements in Go (gofile.go):
 ```go
 package main
 
-import gonode "github.com/jgranstrom/gonodepkg"
+import (
+	gonode "github.com/jgranstrom/gonodepkg"
+	json "github.com/jgranstrom/go-simplejson"
+)
 
 func main() {	
 	gonode.Start(process)
 }
 
-func process(cmd gonode.CommandData) (response gonode.CommandData) {
+func process(cmd *json.Json) (response *json.Json) {
 	// TODO: Add code for processing commands from node
 	return cmd
 }
@@ -97,9 +100,9 @@ As you can see `close()` should be called when you no longer need the Go object 
 **Running commands with gonode** is really simple, the following is an example presuming go is an initialized Go object:
 
 ```js
-go.execute({text: 'Hello world from gonode!'}, function(result, response) {
+go.execute({commandText: 'Hello world from gonode!'}, function(result, response) {
 	if(result.ok) {
-		console.log('Go responded: ' + response.text);
+		console.log('Go responded: ' + response.responseText);
 	}
 });
 ```
@@ -115,26 +118,26 @@ go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 
 `execute()` returns `true` if the command has been registered and eventually will be executed, or `false` if the command was ignored either because gonode hasn't been initialized yet, or because gonode is in the process of closing or terminating.
 
-Note that the JSON object to send can contain anything containable in JSON and in arbitrary structure, and the JSON object returned does not have to obey to any structure of the sent object as they are completely independent. The structure of the returned object is decided in Go.
+Note that the JSON object to send can contain anything containable in JSON and in arbitrary structure, and the JSON object returned does not have to obey to any structure of the sent object as they are completely independent. The structure of the returned object depends on the Go implementation responding it.
 
 **Processing the command in Go** is possibly even simpler:
 
 ```go
-func process(cmd gonode.CommandData) (response gonode.CommandData) {	
-	response = make(gonode.CommandData)
+func process(cmd *json.Json) (response *json.Json) {	
+	response, m, _ := json.MakeMap()
 
-	if(cmd["text"] == "Hello") {
-		response["text"] = "Well hello there!"
+	if(cmd.Get("commandText").MustString() == "Hello") {
+		m["responseText"] = "Well hello there!"
 	} else {
-		response["text"] = "What?"
+		m["responseText"] = "What?"
 	}
 
 	return
 }
 ```
 
-Each command sent to Go will be delegated to the provided `process()` on a new go-routine and `cmd` will contain a `CommandData` object (a wrapper for `map[string]interface{}`) which will be a representation of the JSON object received from node.
-Each `process()` call must return a `CommandData` object containing any data to be part of the response back to node. The response object will, like the command object, be transmitted in JSON.
+Each command sent to Go will be delegated to the provided `process()` on a new go-routine and `cmd` will be a pointer to a `Json` object which is a representation of the JSON object received from node.
+Each `process()` call must return a pointer to a `Json` object containing any data to be part of the response back to node.
 
 ###### Command options
 * `commandTimeoutSec`: Setting this will override the `defaultCommandTimeoutSec` set for the Go object for a specific command. *(Default: `defaultCommandTimeoutSec` of the Go object)*
@@ -219,5 +222,6 @@ var go = new Go({
 * Significantly improve performance by changing types used in Go
 
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
+[go-simplejson]: https://github.com/jgranstrom/go-simplejson
 [Go]: http://golang.org/doc/install#install
 [GOPATH]: http://golang.org/doc/code.html#tmp_2
