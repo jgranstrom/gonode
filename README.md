@@ -182,11 +182,11 @@ To create a `Json` object from Go types some additional methods are provided:
 Provided JSON data:
 ```json
 {
-	data: {
-		array: ["abc", "efg", "klm"],
-		number: 716
+	"data": {
+		"array": ["abc", "efg", "klm"],
+		"number": 716
 	},
-	otherdata: "hello"
+	"otherdata": "hello"
 }
 ```
 Assuming we have a `Json` object called `json` we can get each data as such:
@@ -218,7 +218,7 @@ m["array"] = []int{1, 3, 7}
 Would become:
 ```json
 {
-	array: [1, 3, 7]
+	"array": [1, 3, 7]
 }
 ```
 
