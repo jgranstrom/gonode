@@ -153,6 +153,30 @@ go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 }, {commandTimeoutSec: 60}); // This command will execute for up to one minute before timing out
 ```
 
+## Interacting with JSON
+
+Since gonode supports arbitrary JSON data between Go and node.js you have to handle the Json object yourself. The following are methods provided to get the JSON data in usable Go types and can be called on `Json` objects:
+* `Get(key string)`: Get the pointer to a `Json` object for a specific key.
+* `GetIndex(index int)`: Get the pointer to a `Json` object for a index within a JSON array.
+* `CheckGet(key string)`: Get the pointer to a `Json` object for a specific key together with a possible error.
+* `Map()`: Assert the `Json` object to `map[string]interface{}`, also returns a possible error.
+* `Array()`: Assert the `Json` object to `[]interface{}`, also returns a possible error.
+* `Bool()`: Assert the `Json` object to `bool`, also returns a possible error.
+* `String()`: Assert the `Json` object to `string`, also returns a possible error.
+* `Float64()`: Assert the `Json` object to `float64`, also returns a possible error.
+* `Int()`: Assert the `Json` object to `int`, also returns a possible error.
+* `Int64()`: Assert the `Json` object to `int64`, also returns a possible error.
+* `Bytes()`: Assert the `Json` object to `[]byte`, also returns a possible error.
+* `StringArray()`: Assert the `Json` object to `[]string`, also returns a possible error.
+* `IntArray()`: Assert the `Json` object to `[]int`, also returns a possible error.
+* `MustString(args ...string)`: Assert the `Json` object to `string`, a default value can optionally be provided as an argument to be used if the assertion fails.
+* `MustInt(args ...int)`: Assert the `Json` object to `int`, a default value can optionally be provided as an argument to be used if the assertion fails.
+* `MustFloat64(args ...float64)`: Assert the `Json` object to `float64`, a default value can optionally be provided as an argument to be used if the assertion fails.
+
+To create a `Json` object from Go types some additional methods are provided:
+* `Create(interface{})`: Create a `Json` object with arbitrary data. Can be used to take advantage of a `struct` or for example creating a `Json` object containing a single ´int´ or array etc.
+* `MakeMap()`: Make a `Json` object containing a `map[string]interface{}` and return a pointer to the `Json` object, the created `map` and also a possible error.
+
 ## Closing gonode
 
 There are two ways of closing gonode:
