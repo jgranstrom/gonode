@@ -124,7 +124,7 @@ Note that the JSON object to send can contain anything containable in JSON and i
 
 ```go
 func process(cmd *json.Json) (response *json.Json) {	
-	response, m, _ := json.MakeMap()
+	response, m := json.MakeMap()
 
 	if(cmd.Get("commandText").MustString() == "Hello") {
 		m["responseText"] = "Well hello there!"
@@ -175,7 +175,7 @@ Since gonode supports arbitrary JSON data between Go and node.js you must be abl
 
 To create a `Json` object from Go types some additional methods are provided:
 * `Create(interface{})`: Create a `Json` object with arbitrary data. This can be used to take advantage of a `struct` or for example creating a `Json` object containing a single `int` or array etc.
-* `MakeMap()`: Make a `Json` object containing a `map[string]interface{}` and return a pointer to the `Json` object, the created `map` and also a possible error.
+* `MakeMap()`: Make a `Json` object containing a `map[string]interface{}` and return a pointer to the `Json` object and the created `map`.
 
 **Example of getting JSON data from a `Json` object:**
 
@@ -189,7 +189,7 @@ Provided JSON data:
 	"otherdata": "hello"
 }
 ```
-Assuming we have a `Json` object called `json` we can get each data as such:
+Assuming we have a `Json` object called `json` of the above JSON we can get each data as such:
 ```go
 firstString, err := json.Get("data").Get("array").GetIndex(0).String() 	// "abc"
 entireArray, err := json.Get("data").Get("array").StringArray()			// ["abc" "efg" "klm"]
@@ -211,7 +211,7 @@ Would simply generate the following JSON:
 
 While to code:
 ```go
-json, m, err := simplejson.Create(arr)
+json, m := simplejson.MakeMap(arr)
 m["array"] = []int{1, 3, 7}
 ```
 
