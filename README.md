@@ -155,8 +155,8 @@ go.execute({text: 'Hello world from gonode!'}, function(result, response) {
 
 ## Interacting with JSON
 
-Since gonode supports arbitrary JSON data between Go and node.js you have to handle the Json object yourself. The following are methods provided to get the JSON data in usable Go types and can be called on `Json` objects:
-* `Get(key string)`: Get the pointer to a `Json` object for a specific key.
+Since gonode supports arbitrary JSON data between Go and node.js you must be able to interact with the data communicated. The following are methods provided to get the JSON data in usable Go types and can be called on `Json` objects:
+* `Get(key string)`: Get the pointer to a `Json` object for a specific key. You can recursively `Get()` through the JSON structure to get to any required data.
 * `GetIndex(index int)`: Get the pointer to a `Json` object for a index within a JSON array.
 * `CheckGet(key string)`: Get the pointer to a `Json` object for a specific key together with a possible error.
 * `Map()`: Assert the `Json` object to `map[string]interface{}`, also returns a possible error.
@@ -169,13 +169,60 @@ Since gonode supports arbitrary JSON data between Go and node.js you have to han
 * `Bytes()`: Assert the `Json` object to `[]byte`, also returns a possible error.
 * `StringArray()`: Assert the `Json` object to `[]string`, also returns a possible error.
 * `IntArray()`: Assert the `Json` object to `[]int`, also returns a possible error.
-* `MustString(args ...string)`: Assert the `Json` object to `string`, a default value can optionally be provided as an argument to be used if the assertion fails.
-* `MustInt(args ...int)`: Assert the `Json` object to `int`, a default value can optionally be provided as an argument to be used if the assertion fails.
-* `MustFloat64(args ...float64)`: Assert the `Json` object to `float64`, a default value can optionally be provided as an argument to be used if the assertion fails.
+* `MustString(args ...string)`: Assert the `Json` object to `string`, a default value can optionally be provided as an argument to be returned if the assertion fails.
+* `MustInt(args ...int)`: Assert the `Json` object to `int`, a default value can optionally be provided as an argument to be returned if the assertion fails.
+* `MustFloat64(args ...float64)`: Assert the `Json` object to `float64`, a default value can optionally be provided as an argument to be returned if the assertion fails.
 
 To create a `Json` object from Go types some additional methods are provided:
-* `Create(interface{})`: Create a `Json` object with arbitrary data. Can be used to take advantage of a `struct` or for example creating a `Json` object containing a single ´int´ or array etc.
+* `Create(interface{})`: Create a `Json` object with arbitrary data. This can be used to take advantage of a `struct` or for example creating a `Json` object containing a single `int` or array etc.
 * `MakeMap()`: Make a `Json` object containing a `map[string]interface{}` and return a pointer to the `Json` object, the created `map` and also a possible error.
+
+**Example of getting JSON data from a `Json` object:**
+
+Provided JSON data:
+```json
+{
+	data: {
+		array: ["abc", "efg", "klm"],
+		number: 716
+	},
+	otherdata: "hello"
+}
+```
+Assuming we have a `Json` object called `json` we can get each data as such:
+```go
+firstString, err := json.Get("data").Get("array").GetIndex(0).String() 	// "abc"
+entireArray, err := json.Get("data").Get("array").StringArray()			// ["abc" "efg" "klm"]
+number, err := json.Get("data").Get("number").Int()						// 716
+otherdata := json.Get("otherdata").MustString()							// "hello"
+```
+**Example of creating a `Json` object from Go types:**
+
+The following code:
+```go
+arr := []int{1, 3, 7}
+numberJson := simplejson.Create(arr)
+```
+
+Would simply generate the following JSON:
+```json
+[1, 3, 7]
+```
+
+While to code:
+```go
+json, m, err := simplejson.Create(arr)
+m["array"] = []int{1, 3, 7}
+```
+
+Would become:
+```json
+{
+	array: [1, 3, 7]
+}
+```
+
+This enables you to construct any complex JSON structures needed for communication between Go and node.js. However of course it is recommended to keep the actual communication and complexity of the structures as low as possible to improve performance.
 
 ## Closing gonode
 
