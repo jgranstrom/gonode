@@ -1,6 +1,6 @@
 {
   "name": "gonode",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "gonode - Go for node.js",
   "main": "./lib/gonode.js",
   "scripts": {
