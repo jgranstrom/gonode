@@ -174,7 +174,7 @@ Since gonode supports arbitrary JSON data between Go and node.js you must be abl
 * `MustFloat64(args ...float64)`: Assert the `Json` object to `float64`, a default value can optionally be provided as an argument to be returned if the assertion fails.
 
 To create a `Json` object from Go types some additional methods are provided:
-* `Create(interface{})`: Create a `Json` object with arbitrary data. This can be used to take advantage of a `struct` or for example creating a `Json` object containing a single `int` or array etc.
+* `Create(data interface{})`: Create a `Json` object with arbitrary data. This can be used to take advantage of a `struct` or for example creating a `Json` object containing a single `int` or array etc.
 * `MakeMap()`: Make a `Json` object containing a `map[string]interface{}` and return a pointer to the `Json` object and the created `map`.
 
 **Example of getting JSON data from a `Json` object:**
