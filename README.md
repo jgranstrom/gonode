@@ -290,6 +290,7 @@ var go = new Go({
 ## Todo
 
 * Improved error handling
+* Additional benchmarks and examples
 
 [gonodepkg]: https://github.com/jgranstrom/gonodepkg
 [go-simplejson]: https://github.com/jgranstrom/go-simplejson
