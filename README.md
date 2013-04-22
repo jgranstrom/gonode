@@ -246,9 +246,9 @@ go.execute({text: 'I will run for quite a while!'}, function(result, response) {
 });
 //go.terminate(); // This line would most likely cause the above command to terminate
 //go.close(); // This would cause gonode to close after the above command has finished
+```
 
 *Important:* Always close gonode when you no longer need it, otherwise you will leave Go hanging while waiting for more command to execute. It would waste precious resources and also keep your node process from exiting when you would expect it to.
-```
 
 ## Error handling
 
