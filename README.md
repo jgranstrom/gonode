@@ -209,13 +209,13 @@ Would simply generate the following JSON:
 [1, 3, 7]
 ```
 
-While to code:
+While the code:
 ```go
 json, m := simplejson.MakeMap(arr)
 m["array"] = []int{1, 3, 7}
 ```
 
-Would become:
+Would generate:
 ```json
 {
 	"array": [1, 3, 7]
