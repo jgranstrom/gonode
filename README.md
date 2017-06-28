@@ -123,9 +123,10 @@ Note that the JSON object to send can contain anything containable in JSON and i
 **Processing the command in Go** is possibly even simpler:
 
 ```go
-func process(cmd *json.Json) (response *json.Json) {	
-	response, m := json.MakeMap()
-
+	response, m, error := json.MakeMap()
+	
+	m["error"] = error
+	
 	if(cmd.Get("commandText").MustString() == "Hello") {
 		m["responseText"] = "Well hello there!"
 	} else {
